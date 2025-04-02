@@ -175,199 +175,237 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
 // ===================== BOOKS PAGE ================================
+// ===================== BOOKS PAGE ================================
 function initBooks() {
-  const newBookBtn = document.getElementById("new-visitor");
-  const newPopup = document.getElementById("newPopup");
-  const closeNew = document.getElementById("close-new");
-  const addBookBtn = document.getElementById("add-book");
-  const bookList = document.getElementById("visitor-list");
-  const sortBtn = document.getElementById("sort-btn");
-  const sortSelect = document.getElementById("sort");
-  const searchBtn = document.getElementById("search-btn");
-  const searchInput = document.getElementById("search");
+    const newBookBtn = document.getElementById("new-visitor");
+    const newPopup = document.getElementById("newPopup");
+    const editPopup = document.getElementById("editPopup");
+    const closeNew = document.getElementById("close-new");
+    const closeEdit = document.getElementById("close-edit");
+    const addBookBtn = document.getElementById("add-book");
+    const updateBookBtn = document.getElementById("update-book");
+    const bookList = document.getElementById("visitor-list");
+    const sortBtn = document.getElementById("sort-btn");
+    const sortSelect = document.getElementById("sort");
+    const searchBtn = document.getElementById("search-btn");
+    const searchInput = document.getElementById("search");
 
-  let editIndex = null;
-  let currentBooks = [];
+    let editIndex = null;
+    let currentBooks = [];
 
-  // Initialize the page
-  function init() {
-      loadBooks();
-      setupEventListeners();
+    // Initialize the page
+    function init() {
+        loadBooks();
+        setupEventListeners();
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+        newBookBtn.addEventListener("click", openNewBookPopup);
+        closeNew.addEventListener("click", closeNewBookPopup);
+        closeEdit.addEventListener("click", closeEditBookPopup);
+        addBookBtn.addEventListener("click", handleAddBook);
+        updateBookBtn.addEventListener("click", handleUpdateBook);
+        sortBtn.addEventListener("click", handleSort);
+        searchBtn.addEventListener("click", handleSearch);
+        searchInput.addEventListener("keyup", function(e) {
+            if (e.key === "Enter") {
+                handleSearch();
+            }
+        });
+    }
+
+    // Open new book popup
+    function openNewBookPopup() {
+        newPopup.style.display = "flex";
+        editPopup.style.display = "none";
+        editIndex = null;
+        document.getElementById("book-name").value = "";
+        document.getElementById("author-namer").value = "";
+        document.getElementById("pubilsher-name").value = "";
+        document.getElementById("num-copy").value = "";
+    }
+
+    // Close new book popup
+    function closeNewBookPopup() {
+        newPopup.style.display = "none";
+    }
+
+    // Close edit book popup
+    function closeEditBookPopup() {
+        editPopup.style.display = "none";
+    }
+
+    // Load books from localStorage
+    function loadBooks(booksData = null) {
+        const books = booksData || JSON.parse(localStorage.getItem("books")) || [];
+        currentBooks = [...books];
+        renderBooks(books);
+    }
+
+    // Render books to the table
+    function renderBooks(books) {
+        bookList.innerHTML = "";
+        books.forEach((book, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${book.bookName}</td>
+                <td>${book.authorName}</td>
+                <td>${book.publisher}</td>
+                <td>${book.numOfCopy}</td>
+                <td>
+                    <button class="edit-btn" data-index="${index}">✏️</button>
+                    <button class="delete-btn" data-index="${index}">🗑️</button>
+                </td>
+            `;
+            bookList.appendChild(row);
+        });
+
+        // Set up event listeners for edit and delete buttons
+        setupRowButtons();
+    }
+
+    // Set up event listeners for edit and delete buttons
+    function setupRowButtons() {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const index = this.getAttribute("data-index");
+                deleteBook(index);
+            });
+        });
+
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                editBook(this.getAttribute("data-index"));
+            });
+        });
+    }
+
+    // Handle adding a new book
+    function handleAddBook() {
+        const bookName = document.getElementById("book-name").value.trim();
+        const authorName = document.getElementById("author-namer").value.trim();
+        const publisher = document.getElementById("pubilsher-name").value.trim();
+        let numOfCopy = document.getElementById("num-copy").value.trim();
+
+        // Validate the number of copies
+        numOfCopy = parseInt(numOfCopy);
+        if (isNaN(numOfCopy) || numOfCopy < 0) {
+            alert("The number of copies cannot be less than 0.");
+            return;
+        }
+
+        if (!bookName || !authorName || !publisher || numOfCopy === "") {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        let books = JSON.parse(localStorage.getItem("books")) || [];
+        books.push({ bookName, authorName, publisher, numOfCopy });
+        localStorage.setItem("books", JSON.stringify(books));
+        loadBooks();
+        closeNewBookPopup();
+    }
+
+    // Handle updating a book
+    function handleUpdateBook() {
+        const bookName = document.getElementById("edit-book-name").value.trim();
+        const authorName = document.getElementById("edit-author-namer").value.trim();
+        const publisher = document.getElementById("edit-pubilsher-name").value.trim();
+        let numOfCopy = document.getElementById("edit-num-copy").value.trim();
+
+        // Validate the number of copies
+        numOfCopy = parseInt(numOfCopy);
+        if (isNaN(numOfCopy)) {
+            alert("Please enter a valid number for copies.");
+            return;
+        }
+
+        if (!bookName || !authorName || !publisher || numOfCopy === "") {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        let books = JSON.parse(localStorage.getItem("books")) || [];
+        if (editIndex !== null) {
+            books[editIndex] = { bookName, authorName, publisher, numOfCopy };
+            localStorage.setItem("books", JSON.stringify(books));
+            loadBooks();
+            closeEditBookPopup();
+        }
+    }
+
+    // Edit book - open edit form
+    function editBook(index) {
+        const books = JSON.parse(localStorage.getItem("books")) || [];
+        editIndex = index;
+        const book = books[index];
+
+        // Fill the edit form with book data
+        document.getElementById("edit-book-name").value = book.bookName;
+        document.getElementById("edit-author-namer").value = book.authorName;
+        document.getElementById("edit-pubilsher-name").value = book.publisher;
+        document.getElementById("edit-num-copy").value = book.numOfCopy;
+
+        // Show edit popup and hide add popup if it's open
+        newPopup.style.display = "none";
+        editPopup.style.display = "flex";
+    }
+
+    // Delete book
+    function deleteBook(index) {
+        if (confirm("Are you sure you want to delete this book?")) {
+            let books = JSON.parse(localStorage.getItem("books")) || [];
+            books.splice(index, 1);
+            localStorage.setItem("books", JSON.stringify(books));
+            loadBooks();
+        }
+    }
+
+    // Handle sorting
+    function handleSort() {
+        const sortBy = sortSelect.value;
+        const books = [...currentBooks];
+
+        books.sort((a, b) => {
+            if (sortBy === "bookName") {
+                return a.bookName.localeCompare(b.bookName);
+            } else if (sortBy === "authorName") {
+                return a.authorName.localeCompare(b.authorName);
+            } else if (sortBy === "numOfCopy") {
+                return a.numOfCopy - b.numOfCopy;
+            } else {
+                // Default sort by ID (index)
+                return books.indexOf(a) - books.indexOf(b);
+            }
+        });
+
+        renderBooks(books);
+    }
+
+    // Handle search
+    function handleSearch() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+
+        if (!searchTerm) {
+            loadBooks();
+            return;
+        }
+
+        const books = JSON.parse(localStorage.getItem("books")) || [];
+        const filteredBooks = books.filter(book =>
+            book.bookName.toLowerCase().includes(searchTerm) ||
+            book.authorName.toLowerCase().includes(searchTerm) ||
+            book.publisher.toLowerCase().includes(searchTerm)
+        );
+
+        loadBooks(filteredBooks);
+    }
+
+    // Initialize the books page
+    init();
   }
-
-  // Set up event listeners
-  function setupEventListeners() {
-      newBookBtn.addEventListener("click", openNewBookPopup);
-      closeNew.addEventListener("click", closeNewBookPopup);
-      addBookBtn.addEventListener("click", handleAddBook);
-      sortBtn.addEventListener("click", handleSort);
-      searchBtn.addEventListener("click", handleSearch);
-      searchInput.addEventListener("keyup", function(e) {
-          if (e.key === "Enter") {
-              handleSearch();
-          }
-      });
-  }
-
-  // Open new book popup
-  function openNewBookPopup() {
-      newPopup.style.display = "flex";
-      editIndex = null;
-      document.getElementById("book-name").value = "";
-      document.getElementById("author-namer").value = "";
-      document.getElementById("pubilsher-name").value = "";
-      document.getElementById("num-copy").value = "";
-  }
-
-  // Close new book popup
-  function closeNewBookPopup() {
-      newPopup.style.display = "none";
-  }
-
-  // Load books from localStorage
-  function loadBooks(booksData = null) {
-      const books = booksData || JSON.parse(localStorage.getItem("books")) || [];
-      currentBooks = [...books];
-      renderBooks(books);
-  }
-
-  // Render books to the table
-  function renderBooks(books) {
-      bookList.innerHTML = "";
-      books.forEach((book, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-              <td>${index + 1}</td>
-              <td>${book.bookName}</td>
-              <td>${book.authorName}</td>
-              <td>${book.publisher}</td>
-              <td>${book.numOfCopy}</td>
-              <td>
-                  <button class="edit-btn" data-index="${index}">✏️</button>
-                  <button class="delete-btn" data-index="${index}">🗑️</button>
-              </td>
-          `;
-          bookList.appendChild(row);
-      });
-
-      // Set up event listeners for edit and delete buttons
-      setupRowButtons();
-  }
-
-  // Set up event listeners for edit and delete buttons
-  function setupRowButtons() {
-      document.querySelectorAll(".delete-btn").forEach(button => {
-          button.addEventListener("click", function() {
-              const index = this.getAttribute("data-index");
-              deleteBook(index);
-          });
-      });
-
-      document.querySelectorAll(".edit-btn").forEach(button => {
-          button.addEventListener("click", function() {
-              editBook(this.getAttribute("data-index"));
-          });
-      });
-  }
-
-  // Handle adding or updating a book
-  function handleAddBook() {
-      const bookName = document.getElementById("book-name").value.trim();
-      const authorName = document.getElementById("author-namer").value.trim();
-      const publisher = document.getElementById("pubilsher-name").value.trim();
-      let numOfCopy = document.getElementById("num-copy").value.trim();
-
-      // Validate the number of copies
-      numOfCopy = parseInt(numOfCopy);
-      if (isNaN(numOfCopy) || numOfCopy < 0) {
-          alert("The number of copies cannot be less than 0.");
-          return;
-      }
-
-      if (!bookName || !authorName || !publisher || numOfCopy === "") {
-          alert("Please fill in all fields");
-          return;
-      }
-
-      let books = JSON.parse(localStorage.getItem("books")) || [];
-
-      if (editIndex !== null) {
-          // Update existing book
-          books[editIndex] = { bookName, authorName, publisher, numOfCopy };
-      } else {
-          // Add new book
-          books.push({ bookName, authorName, publisher, numOfCopy });
-      }
-
-      localStorage.setItem("books", JSON.stringify(books));
-      loadBooks();
-      closeNewBookPopup();
-  }
-
-  // Edit book
-  function editBook(index) {
-      const books = JSON.parse(localStorage.getItem("books")) || [];
-      editIndex = index;
-      document.getElementById("book-name").value = books[index].bookName;
-      document.getElementById("author-namer").value = books[index].authorName;
-      document.getElementById("pubilsher-name").value = books[index].publisher;
-      document.getElementById("num-copy").value = books[index].numOfCopy;
-      newPopup.style.display = "flex";
-  }
-
-  // Delete book
-  function deleteBook(index) {
-      if (confirm("Are you sure you want to delete this book?")) {
-          let books = JSON.parse(localStorage.getItem("books")) || [];
-          books.splice(index, 1);
-          localStorage.setItem("books", JSON.stringify(books));
-          loadBooks();
-      }
-  }
-
-  // Handle sorting
-  function handleSort() {
-      const sortBy = sortSelect.value;
-      const books = [...currentBooks];
-
-      books.sort((a, b) => {
-          if (sortBy === "bookName") {
-              return a.bookName.localeCompare(b.bookName);
-          } else if (sortBy === "authorName") {
-              return a.authorName.localeCompare(b.authorName);
-          } else if (sortBy === "numOfCopy") {
-              return a.numOfCopy - b.numOfCopy;
-          } else {
-              // Default sort by ID (index)
-              return books.indexOf(a) - books.indexOf(b);
-          }
-      });
-
-      renderBooks(books);
-  }
-
-  // Handle search
-  function handleSearch() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-
-      if (!searchTerm) {
-          loadBooks();
-          return;
-      }
-
-      const books = JSON.parse(localStorage.getItem("books")) || [];
-      const filteredBooks = books.filter(book =>
-          book.bookName.toLowerCase().includes(searchTerm) ||
-          book.authorName.toLowerCase().includes(searchTerm) ||
-          book.publisher.toLowerCase().includes(searchTerm)
-      );
-
-      loadBooks(filteredBooks);
-  }
-
-  // Initialize the books page
-  init();
-}
 // Initialize the books page when DOM is loaded
 document.addEventListener("DOMContentLoaded", function() {
   // Check if we're on the books page
@@ -377,180 +415,208 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
-  // ===================== VISITORS PAGE ================================
-  function initVisitors() {
-      const newVisitorBtn = document.getElementById("new-visitor");
-      const newPopup = document.getElementById("newPopup");
-      const closeNew = document.getElementById("close-new");
-      const addVisitorBtn = document.getElementById("add-visitor");
-      const visitorList = document.getElementById("visitor-list");
-      const sortBtn = document.getElementById("sort-btn");
-      const sortSelect = document.getElementById("sort");
-      const searchBtn = document.getElementById("search-btn");
-      const searchInput = document.getElementById("search");
+// ===================== VISITORS PAGE ================================
+function initVisitors() {
+    const newVisitorBtn = document.getElementById("new-visitor");
+    const newPopup = document.getElementById("newPopup");
+    const editPopup = document.getElementById("editPopup");
+    const closeNew = document.getElementById("close-new");
+    const closeEdit = document.getElementById("close-edit");
+    const addVisitorBtn = document.getElementById("add-visitor");
+    const updateVisitorBtn = document.getElementById("update-visitor");
+    const visitorList = document.getElementById("visitor-list");
+    const sortBtn = document.getElementById("sort-btn");
+    const sortSelect = document.getElementById("sort");
+    const searchBtn = document.getElementById("search-btn");
+    const searchInput = document.getElementById("search");
 
-      let editIndex = null;
-      let currentVisitors = [];
+    let editIndex = null;
+    let currentVisitors = [];
 
-      // Initialize the page
-      function init() {
-          loadVisitors();
-          setupEventListeners();
-      }
+    // Initialize the page
+    function init() {
+        loadVisitors();
+        setupEventListeners();
+    }
 
-      // Set up event listeners
-      function setupEventListeners() {
-          newVisitorBtn.addEventListener("click", openNewVisitorPopup);
-          closeNew.addEventListener("click", closeNewVisitorPopup);
-          addVisitorBtn.addEventListener("click", handleAddVisitor);
-          sortBtn.addEventListener("click", handleSort);
-          searchBtn.addEventListener("click", handleSearch);
-          searchInput.addEventListener("keyup", function(e) {
-              if (e.key === "Enter") {
-                  handleSearch();
-              }
-          });
-      }
+    // Set up event listeners
+    function setupEventListeners() {
+        newVisitorBtn.addEventListener("click", openNewVisitorPopup);
+        closeNew.addEventListener("click", closeNewVisitorPopup);
+        closeEdit.addEventListener("click", closeEditVisitorPopup);
+        addVisitorBtn.addEventListener("click", handleAddVisitor);
+        updateVisitorBtn.addEventListener("click", handleUpdateVisitor);
+        sortBtn.addEventListener("click", handleSort);
+        searchBtn.addEventListener("click", handleSearch);
+        searchInput.addEventListener("keyup", function(e) {
+            if (e.key === "Enter") {
+                handleSearch();
+            }
+        });
+    }
 
-      // Open new visitor popup
-      function openNewVisitorPopup() {
-          newPopup.style.display = "flex";
-          editIndex = null;
-          document.getElementById("visitor-name").value = "";
-          document.getElementById("phone-number").value = "";
-      }
+    // Open new visitor popup
+    function openNewVisitorPopup() {
+        newPopup.style.display = "flex";
+        editPopup.style.display = "none";
+        editIndex = null;
+        document.getElementById("visitor-name").value = "";
+        document.getElementById("phone-number").value = "";
+    }
 
-      // Close new visitor popup
-      function closeNewVisitorPopup() {
-          newPopup.style.display = "none";
-      }
+    // Close new visitor popup
+    function closeNewVisitorPopup() {
+        newPopup.style.display = "none";
+    }
 
-      // Load visitors from localStorage
-      function loadVisitors(visitorsData = null) {
-          const visitors = visitorsData || JSON.parse(localStorage.getItem("visitors")) || [];
-          currentVisitors = [...visitors];
-          renderVisitors(visitors);
-      }
+    // Close edit visitor popup
+    function closeEditVisitorPopup() {
+        editPopup.style.display = "none";
+    }
 
-      // Render visitors to the table
-      function renderVisitors(visitors) {
-          visitorList.innerHTML = "";
-          visitors.forEach((visitor, index) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                  <td>${index + 1}</td>
-                  <td>${visitor.name}</td>
-                  <td>${visitor.phone}</td>
-                  <td>
-                      <button class="edit-btn" data-index="${index}">✏️</button>
-                      <button class="delete-btn" data-index="${index}">🗑️</button>
-                  </td>
-              `;
-              visitorList.appendChild(row);
-          });
+    // Load visitors from localStorage
+    function loadVisitors(visitorsData = null) {
+        const visitors = visitorsData || JSON.parse(localStorage.getItem("visitors")) || [];
+        currentVisitors = [...visitors];
+        renderVisitors(visitors);
+    }
 
-          // Set up event listeners for edit and delete buttons
-          setupRowButtons();
-      }
+    // Render visitors to the table
+    function renderVisitors(visitors) {
+        visitorList.innerHTML = "";
+        visitors.forEach((visitor, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${visitor.name}</td>
+                <td>${visitor.phone}</td>
+                <td>
+                    <button class="edit-btn" data-index="${index}">✏️</button>
+                    <button class="delete-btn" data-index="${index}">🗑️</button>
+                </td>
+            `;
+            visitorList.appendChild(row);
+        });
 
-      // Set up event listeners for edit and delete buttons
-      function setupRowButtons() {
-          document.querySelectorAll(".delete-btn").forEach(button => {
-              button.addEventListener("click", function() {
-                  const index = this.getAttribute("data-index");
-                  deleteVisitor(index);
-              });
-          });
+        // Set up event listeners for edit and delete buttons
+        setupRowButtons();
+    }
 
-          document.querySelectorAll(".edit-btn").forEach(button => {
-              button.addEventListener("click", function() {
-                  editVisitor(this.getAttribute("data-index"));
-              });
-          });
-      }
+    // Set up event listeners for edit and delete buttons
+    function setupRowButtons() {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const index = this.getAttribute("data-index");
+                deleteVisitor(index);
+            });
+        });
 
-      // Handle adding or updating a visitor
-      function handleAddVisitor() {
-          const name = document.getElementById("visitor-name").value.trim();
-          const phone = document.getElementById("phone-number").value.trim();
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                editVisitor(this.getAttribute("data-index"));
+            });
+        });
+    }
 
-          if (!name || !phone) {
-              alert("Please fill in all fields");
-              return;
-          }
+    // Handle adding a new visitor
+    function handleAddVisitor() {
+        const name = document.getElementById("visitor-name").value.trim();
+        const phone = document.getElementById("phone-number").value.trim();
 
-          let visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+        if (!name || !phone) {
+            alert("Please fill in all fields");
+            return;
+        }
 
-          if (editIndex !== null) {
-              // Update existing visitor
-              visitors[editIndex] = { name, phone };
-          } else {
-              // Add new visitor
-              visitors.push({ name, phone });
-          }
+        let visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+        visitors.push({ name, phone });
+        localStorage.setItem("visitors", JSON.stringify(visitors));
+        loadVisitors();
+        closeNewVisitorPopup();
+    }
 
-          localStorage.setItem("visitors", JSON.stringify(visitors));
-          loadVisitors();
-          closeNewVisitorPopup();
-      }
+    // Handle updating a visitor
+    function handleUpdateVisitor() {
+        const name = document.getElementById("edit-visitor-name").value.trim();
+        const phone = document.getElementById("edit-phone-number").value.trim();
 
-      // Edit visitor
-      function editVisitor(index) {
-          const visitors = JSON.parse(localStorage.getItem("visitors")) || [];
-          editIndex = index;
-          document.getElementById("visitor-name").value = visitors[index].name;
-          document.getElementById("phone-number").value = visitors[index].phone;
-          newPopup.style.display = "flex";
-      }
+        if (!name || !phone) {
+            alert("Please fill in all fields");
+            return;
+        }
 
-      // Delete visitor
-      function deleteVisitor(index) {
-          if (confirm("Are you sure you want to delete this visitor?")) {
-              let visitors = JSON.parse(localStorage.getItem("visitors")) || [];
-              visitors.splice(index, 1);
-              localStorage.setItem("visitors", JSON.stringify(visitors));
-              loadVisitors();
-          }
-      }
+        let visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+        if (editIndex !== null) {
+            visitors[editIndex] = { name, phone };
+            localStorage.setItem("visitors", JSON.stringify(visitors));
+            loadVisitors();
+            closeEditVisitorPopup();
+        }
+    }
 
-      // Handle sorting
-      function handleSort() {
-          const sortBy = sortSelect.value;
-          const visitors = [...currentVisitors];
+    // Edit visitor - open edit form
+    function editVisitor(index) {
+        const visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+        editIndex = index;
+        const visitor = visitors[index];
 
-          visitors.sort((a, b) => {
-              if (sortBy === "name") {
-                  return a.name.localeCompare(b.name);
-              } else {
-                  // Default sort by ID (index)
-                  return visitors.indexOf(a) - visitors.indexOf(b);
-              }
-          });
+        // Fill the edit form with visitor data
+        document.getElementById("edit-visitor-name").value = visitor.name;
+        document.getElementById("edit-phone-number").value = visitor.phone;
 
-          renderVisitors(visitors);
-      }
+        // Show edit popup and hide add popup if it's open
+        newPopup.style.display = "none";
+        editPopup.style.display = "flex";
+    }
 
-      // Handle search
-      function handleSearch() {
-          const searchTerm = searchInput.value.trim().toLowerCase();
+    // Delete visitor
+    function deleteVisitor(index) {
+        if (confirm("Are you sure you want to delete this visitor?")) {
+            let visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+            visitors.splice(index, 1);
+            localStorage.setItem("visitors", JSON.stringify(visitors));
+            loadVisitors();
+        }
+    }
 
-          if (!searchTerm) {
-              loadVisitors();
-              return;
-          }
+    // Handle sorting
+    function handleSort() {
+        const sortBy = sortSelect.value;
+        const visitors = [...currentVisitors];
 
-          const visitors = JSON.parse(localStorage.getItem("visitors")) || [];
-          const filteredVisitors = visitors.filter(visitor =>
-              visitor.name.toLowerCase().includes(searchTerm) ||
-              visitor.phone.toLowerCase().includes(searchTerm)
-          );
+        visitors.sort((a, b) => {
+            if (sortBy === "name") {
+                return a.name.localeCompare(b.name);
+            } else {
+                // Default sort by ID (index)
+                return visitors.indexOf(a) - visitors.indexOf(b);
+            }
+        });
 
-          loadVisitors(filteredVisitors);
-      }
+        renderVisitors(visitors);
+    }
 
-      // Initialize the visitors page
-      init();
-  }
+    // Handle search
+    function handleSearch() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+
+        if (!searchTerm) {
+            loadVisitors();
+            return;
+        }
+
+        const visitors = JSON.parse(localStorage.getItem("visitors")) || [];
+        const filteredVisitors = visitors.filter(visitor =>
+            visitor.name.toLowerCase().includes(searchTerm) ||
+            visitor.phone.toLowerCase().includes(searchTerm)
+        );
+
+        loadVisitors(filteredVisitors);
+    }
+
+    // Initialize the visitors page
+    init();
+}
 
   // ===================== CARDS PAGE ================================
   function initCards() {
