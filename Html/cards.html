@@ -6,7 +6,7 @@
     <title>Library Cards</title>
     <link rel="stylesheet" href="../style.css" />
   </head>
-  <body>
+  <body data-page="cards">
     <main>
       <div class="container">
         <a href="../index.html"> <h1 class="library-title">LIBRARY</h1></a>
@@ -14,7 +14,7 @@
         <nav>
           <ul>
             <li><a href="./book.html">Books</a></li>
-            <li><a href="./visitors.html" >Visitors</a></li>
+            <li><a href="./visitors.html">Visitors</a></li>
             <li><a href="#" class="active">Cards</a></li>
             <li><a href="./statistics.html">Statistics</a></li>
           </ul>
@@ -24,7 +24,7 @@
             <h2>ALL CARDS:</h2>
             <button id="new-visitor">New card</button>
           </div>
-          <hr>
+          <hr />
           <div class="controls">
             <div class="sort-search">
               <label for="sort">Sort by:</label>
@@ -47,30 +47,27 @@
                 <th>book Name</th>
                 <th>Borrow Date</th>
                 <th>Return Date</th>
-        
               </tr>
             </thead>
-            <tbody id="visitor-list">
-            </tbody>
+            <tbody id="visitor-list"></tbody>
           </table>
         </div>
-                <!-- new Card popup -->
-                <div class="newPopup" id="newPopup" >
-                  <div class="modal">
-                    <span class="close" id="close-new">&times;</span>
-                    <h2>Add New Card</h2>
-                    <label for="visitor-name">Visitor Name:</label>
-                    <select id="card-visitor-name">
-                      <option value="" disabled selected>Choose visitor name</option>
-                    </select>
-                    <label for="phone-number">Book Title:</label>
-                    <select id="card-book-name">
-                      <option value="" disabled selected>Choose book name</option>
-                    </select>
-                    <button id="add-visitor">Add Card</button>
-                  </div>
-                </div>
-
+        <!-- new Card popup -->
+        <div class="newPopup" id="newPopup">
+          <div class="modal">
+            <span class="close" id="close-new">&times;</span>
+            <h2>Add New Card</h2>
+            <label for="visitor-name">Visitor Name:</label>
+            <select id="card-visitor-name">
+              <option value="" disabled selected>Choose visitor name</option>
+            </select>
+            <label for="phone-number">Book Title:</label>
+            <select id="card-book-name">
+              <option value="" disabled selected>Choose book name</option>
+            </select>
+            <button id="add-visitor">Add Card</button>
+          </div>
+        </div>
       </div>
     </main>
 

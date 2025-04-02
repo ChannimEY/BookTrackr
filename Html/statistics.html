@@ -6,7 +6,7 @@
     <title>Library Statistics</title>
     <link rel="stylesheet" href="../style.css" />
   </head>
-  <body>
+  <body data-page="statistics">
     <main>
       <div class="container">
         <a href="../index.html"> <h1 class="library-title">LIBRARY</h1></a>
@@ -21,16 +21,16 @@
         </nav>
         <div class="visitors-section">
           <div class="visitors-header">
-            <h2>ALL VISITORS:</h2>
-            <button id="new-visitor">New visitor</button>
+            <h2>ALL Statistics:</h2>
+
           </div>
           <hr>
           <div class="controls">
             <div class="sort-search">
               <label for="sort">Sort by:</label>
               <select id="sort">
-                <option value="id">ID</option>
-                <option value="name">Name</option>
+                <option value="id">Most popular Book</option>
+                <option value="name">Most Active Visitor</option>
               </select>
               <button id="sort-btn">Sort</button>
             </div>
@@ -54,7 +54,7 @@
           </table>
         </div>
       </div>
-      
+
     </main>
     <script src="../script.js"></script>
   </body>
