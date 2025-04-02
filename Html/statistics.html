@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Statistics</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <a href="../index.html"> <h1 class="library-title">LIBRARY</h1></a>
+
+        <nav>
+          <ul>
+            <li><a href="./book.html">Books</a></li>
+            <li><a href="./visitors.html" >Visitors</a></li>
+            <li><a href="./cards.html">Cards</a></li>
+            <li><a href="#" class="active">Statistics</a></li>
+          </ul>
+        </nav>
+        <div class="visitors-section">
+          <div class="visitors-header">
+            <h2>ALL VISITORS:</h2>
+            <button id="new-visitor">New visitor</button>
+          </div>
+          <hr>
+          <div class="controls">
+            <div class="sort-search">
+              <label for="sort">Sort by:</label>
+              <select id="sort">
+                <option value="id">ID</option>
+                <option value="name">Name</option>
+              </select>
+              <button id="sort-btn">Sort</button>
+            </div>
+            <div class="search">
+              <input type="text" id="search" placeholder="Search..." />
+              <button id="search-btn">Search</button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Borrowed</th>
+
+              </tr>
+            </thead>
+            <tbody id="visitor-list">
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

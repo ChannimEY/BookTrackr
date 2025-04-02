@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Visitors</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <a href="../index.html"> <h1 class="library-title">LIBRARY</h1></a>
+
+        <nav>
+          <ul>
+            <li><a href="./book.html">Books</a></li>
+            <li><a href="#" class="active">Visitors</a></li>
+            <li><a href="./cards.html">Cards</a></li>
+            <li><a href="./statistics.html">Statistics</a></li>
+          </ul>
+        </nav>
+        <div class="visitors-section">
+          <div class="visitors-header">
+            <h2>ALL VISITORS:</h2>
+            <button id="new-visitor">New visitor</button>
+          </div>
+          <hr />
+          <div class="controls">
+            <div class="sort-search">
+              <label for="sort">Sort by:</label>
+              <select id="sort">
+                <option value="id">ID</option>
+                <option value="name">Name</option>
+              </select>
+              <button id="sort-btn">Sort</button>
+            </div>
+            <div class="search">
+              <input type="text" id="search" placeholder="Search..." />
+              <button id="search-btn">Search</button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody id="visitor-list">
+            </tbody>
+          </table>
+        </div>
+        <!-- new visitor popup -->
+        <div class="newPopup" id="newPopup" >
+          <div class="modal">
+            <span class="close" id="close-new">&times;</span>
+            <h2>Add New Visitor</h2>
+            <label for="visitor-name">Visitor Name:</label>
+            <input type="text" id="visitor-name" placeholder="Enter visitor name">
+            <label for="phone-number">Phone Number:</label>
+            <input type="text" id="phone-number" placeholder="Enter phone number">
+            <button id="add-visitor">Add Visitor</button>
+          </div>
+        </div>
+        <!-- edit visitor popup -->
+        <div class="editPopup" id="editPopup" style="display: none;">
+          <div class="modal">
+            <span class="close" id="close-edit">&times;</span>
+            <h2>Edit Visitor</h2>
+            <label for="edit-visitor-name">Visitor Name:</label>
+            <input type="text" id="edit-visitor-name">
+            <label for="edit-phone-number">Phone Number:</label>
+            <input type="text" id="edit-phone-number">
+            <button id="update-visitor">Update Visitor</button>
+
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

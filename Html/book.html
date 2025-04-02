@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Books</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <a href="../index.html"> <h1 class="library-title">LIBRARY</h1></a>
+
+        <nav>
+          <ul>
+            <li><a href="#" class="active">Books</a></li>
+            <li><a href="./visitors.html" >Visitors</a></li>
+            <li><a href="./cards.html">Cards</a></li>
+            <li><a href="./statistics.html">Statistics</a></li>
+          </ul>
+        </nav>
+        <div class="visitors-section">
+          <div class="visitors-header">
+            <h2>ALL BOOKS:</h2>
+            <button id="new-visitor">New book</button>
+          </div>
+          <hr>
+          <div class="controls">
+            <div class="sort-search">
+              <label for="sort">Sort by:</label>
+              <select id="sort">
+                <option value="bookName"> Book's name</option>
+                <option value="authorName"> Author's name</option>
+                <option value="numOfCopy"> Number of copies</option>
+              </select>
+              <button id="sort-btn">Sort</button>
+            </div>
+            <div class="search">
+              <input type="text" id="search" placeholder="Search..." />
+              <button id="search-btn">Search</button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Book Title</th>
+                <th>Author' Name</th>
+                <th>Publisher</th>
+                <th>Copies</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody id="visitor-list">
+
+            </tbody>
+          </table>
+        </div>
+        <!-- new visitor popup -->
+        <div class="newPopup" id="newPopup" >
+          <div class="modal">
+            <span class="close" id="close-new">&times;</span>
+            <h2>Add New Book</h2>
+            <label for="visitor-name">Book Title:</label>
+            <input type="text" id="book-name" placeholder="Enter Book Title">
+            <label for="phone-number">Author's Name:</label>
+            <input type="text" id="author-namer" placeholder="Enter Author's Name">
+            <label for="phone-number">Publisher's Name:</label>
+            <input type="text" id="pubilsher-name" placeholder="Enter Publisher's Name">
+            <label for="phone-number">Number of Copies:</label>
+            <input type="number" id="num-copy" placeholder="Enter number of copies">
+            <button id="add-book">Add Book</button>
+          </div>
+        </div>
+        <!-- edit book popup -->
+        <div class="editPopup" id="editPopup" style="display: none;">
+          <div class="modal">
+            <span class="close" id="close-edit">&times;</span>
+            <h2>Edit Book</h2>
+            <label for="edit-book-name">Book Title:</label>
+            <input type="text" id="edit-book-name">
+            <label for="edit-author-namer">Author's Name:</label>
+            <input type="text" id="edit-author-namer">
+            <label for="edit-pubilsher-name">Publisher's Name:</label>
+            <input type="text" id="edit-pubilsher-name">
+            <label for="edit-num-copy">Number of copies:</label>
+            <input type="number" id="edit-num-copy">
+            <button id="update-book">Update Book</button>
+
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>
